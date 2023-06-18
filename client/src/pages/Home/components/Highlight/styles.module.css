@@ -1,0 +1,23 @@
+.highlight {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  align-items: center;
+}
+
+.highlight img {
+  border: 10px solid #00bc77;
+  border-radius: 50%;
+  padding: 1rem;
+  width: 150px;
+}
+
+.highlight p {
+  text-align: center;
+  max-width: 85ch;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
