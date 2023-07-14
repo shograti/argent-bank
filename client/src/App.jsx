@@ -3,13 +3,21 @@ import Profile from "./pages/Profile";
 import SignIn from "./pages/SignIn";
 import Home from "./pages/Home";
 
+import { useSelector } from "react-redux";
+
 function App() {
+  const { user } = useSelector((state) => state.auth);
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/sign-in" element={<SignIn />} />
-        <Route path="/profile" element={<Profile />} />
+
+        {user ? (
+          <Route path="/profile" element={<Profile />} />
+        ) : (
+          <Route path="/login" element={<SignIn />} />
+        )}
+        <Route path="*" element={<Home />} />
       </Routes>
     </Router>
   );

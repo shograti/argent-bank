@@ -2,8 +2,13 @@ import styles from "./styles.module.css";
 import logo from "../../assets/logo.png";
 import { FaUserCircle, FaSignOutAlt } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../../redux/authSlice";
 
-function Header({ isLoggedIn }) {
+function Header() {
+  const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleHomeNavigation = () => {
@@ -11,15 +16,16 @@ function Header({ isLoggedIn }) {
   };
 
   const handleSignInOrProfileNavigation = () => {
-    if (isLoggedIn) {
+    if (user) {
       navigate("/profile");
     } else {
-      navigate("/sign-in");
+      navigate("/login");
     }
   };
 
   const handleLogout = () => {
-    console.log("logout");
+    dispatch(logout());
+    navigate('/')
   };
 
   return (
@@ -28,9 +34,9 @@ function Header({ isLoggedIn }) {
       <nav>
         <div className={styles.item} onClick={handleSignInOrProfileNavigation}>
           <FaUserCircle className={styles.icon} />
-          <p>{isLoggedIn ? "Tony" : "Sign In"}</p>
+          <p>{user ? user.firstName : "Sign In"}</p>
         </div>
-        {isLoggedIn ? (
+        {user ? (
           <div className={styles.item} onClick={handleLogout}>
             <FaSignOutAlt className={styles.icon} />
             <p>Sign Out</p>
@@ -40,5 +46,9 @@ function Header({ isLoggedIn }) {
     </header>
   );
 }
+
+Header.propTypes = {
+  isLoggedIn: PropTypes.bool,
+};
 
 export default Header;
