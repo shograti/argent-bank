@@ -6,7 +6,9 @@ import { useState } from "react";
 import { editProfile, getProfile } from "../../redux/authSlice";
 
 function Profile() {
-  const { user, token } = useSelector((state) => state.auth);
+  const { user, token, isLoading, isError } = useSelector(
+    (state) => state.auth,
+  );
   const [isEditingMode, setIsEditingMode] = useState(false);
   const [firstName, setFirstName] = useState(user.firstName);
   const [lastName, setLastName] = useState(user.lastName);
@@ -15,14 +17,12 @@ function Profile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const profileData = { token, user: { firstName, lastName } };
-      dispatch(editProfile(profileData)).then(() => {
-        dispatch(getProfile(token));
-      });
+      await dispatch(editProfile(profileData)).unwrap();
+      await dispatch(getProfile(token)).unwrap();
     } catch (error) {
-      console.log("Editing error:", error);
+      console.log(error);
     }
   };
 
@@ -34,29 +34,46 @@ function Profile() {
             Welcome back {user.firstName} {user.lastName}!
           </h1>
           {!isEditingMode ? (
-            <button onClick={() => setIsEditingMode(true)} type="button">
+            <button
+              onClick={() => setIsEditingMode(true)}
+              type="button"
+              disabled={isLoading}
+            >
               Edit Name
             </button>
           ) : (
             <form className={styles.form} onSubmit={handleSubmit}>
               <div className={styles.input_container}>
                 <input
+                  required
                   type="text"
                   onChange={(e) => setFirstName(e.target.value)}
                   placeholder={user.firstName}
                 />
                 <input
+                  required
                   onChange={(e) => setLastName(e.target.value)}
                   type="text"
                   placeholder={user.lastName}
                 />
               </div>
               <div className={styles.button_container}>
-                <button type="submit">Save</button>
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className={styles.save_button}
+                >
+                  Save
+                </button>
                 <button onClick={() => setIsEditingMode(false)} type="button">
                   Cancel
                 </button>
               </div>
+              {isError && (
+                <p className={styles.error_message}>
+                  Something went wrong, please try again later
+                </p>
+              )}
             </form>
           )}
         </div>

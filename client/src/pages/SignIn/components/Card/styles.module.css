@@ -50,3 +50,14 @@
   text-decoration: underline;
   border: none;
 }
+
+.card button:disabled {
+  background-color: #ccc;
+  color: #fff;
+}
+
+.error_message {
+  color: red;
+  font-size: 0.8rem;
+  font-weight: 700;
+}

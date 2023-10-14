@@ -43,7 +43,6 @@
   display: flex;
   gap: 1em;
   justify-content: center;
-
 }
 
 .button_container button {
@@ -66,4 +65,15 @@
 
 .input_container input {
   padding: 0.5em;
+}
+
+.error_message {
+  color: red;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.save_button:disabled {
+  background-color: #ccc;
+  color: #fff;
 }

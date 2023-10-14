@@ -1,26 +1,26 @@
 import { FaUserCircle } from "react-icons/fa";
 import styles from "./styles.module.css";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getProfile, login } from "../../../../redux/authSlice";
 import { useNavigate } from "react-router-dom";
 
 function Card() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { isLoading, isError } = useSelector((state) => state.auth);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      dispatch(login({ email, password })).then((result) => {
-        dispatch(getProfile(result.payload));
-        navigate("/profile");
-      });
+      const result = await dispatch(login({ email, password })).unwrap();
+      console.log(result);
+      await dispatch(getProfile(result)).unwrap();
+      navigate("/profile");
     } catch (error) {
-      console.log("Login error:", error);
+      console.log(error);
     }
   };
 
@@ -32,6 +32,7 @@ function Card() {
         <div className={styles.input_container}>
           <label htmlFor="username">Username</label>
           <input
+            required
             type="text"
             id="username"
             value={email}
@@ -41,6 +42,7 @@ function Card() {
         <div className={styles.input_container}>
           <label htmlFor="password">Password</label>
           <input
+            required
             type="password"
             id="password"
             value={password}
@@ -49,10 +51,15 @@ function Card() {
         </div>
 
         <div className={styles.terms_agreements}>
-          <input type="checkbox" id="terms-agreements" />
+          <input required type="checkbox" id="terms-agreements" />
           <label htmlFor="terms-agreements">Remember me</label>
         </div>
-        <button>Sign In</button>
+        <button disabled={isLoading}>Sign In</button>
+        {isError && (
+          <p className={styles.error_message}>
+            Something went wrong, please try again later
+          </p>
+        )}
       </form>
     </div>
   );
